@@ -11,11 +11,13 @@ class GameInterface:
         self.c3 = c3
 
     def __str__(self):
-        return f"{self.a1} {self.a2} {self.a3}\n" \
-        f"{self.b1} {self.b2} {self.b3}\n" \
-        f"{self.c1} {self.c2} {self.c3}"
+        return f"---------\n| {self.a1} {self.a2} {self.a3} |\n" \
+        f"| {self.b1} {self.b2} {self.b3} |\n" \
+        f"| {self.c1} {self.c2} {self.c3} |\n" \
+        "---------"
 
 
 if __name__ == '__main__':
-    game = GameInterface(*"XOXOXOXXO")
+    user_input = input()
+    game = GameInterface(*user_input)
     print(game)
