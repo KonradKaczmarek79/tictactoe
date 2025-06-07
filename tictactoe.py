@@ -1,7 +1,6 @@
 from collections import Counter
 import string
 
-
 class GameInterface:
     def __init__(self, a1, a2, a3, b1, b2, b3, c1, c2, c3):
         # self.grid = [[a1, a2, a3], [b1, b2, b3], [c1, c2, c3]]
@@ -68,28 +67,28 @@ class GameInterface:
         else:
             return "Draw" if "_" not in Counter(temp_list).keys() else "Game not finished"
 
-    def update_board(self, value: str):
-        present = self.grid.get(value, False)
+    def update_board(self, key_value: str, value: str):
+        present = self.grid.get(key_value, False)
 
         if present:
             if present == "_":
-                self.grid[value] = "X"
+                self.grid[key_value] = value
             else:
                 return False, "This cell is occupied! Choose another one!"
         else:
-            coordinates = value.split(" ")
+            coordinates = key_value.split(" ")
             if not all([x in string.digits for x in coordinates]) or "" in coordinates:
                 return False, "You should enter numbers!"
             else:
                 return False, "Coordinates should be from 1 to 3!"
         return True, self.__str__()
 
-    def make_move(self, symbol):
-        move_status, msg = self.update_board(symbol)
+    def make_move(self, symbol, current_value):
+        move_status, msg = self.update_board(symbol, current_value)
         print(msg)
         while not move_status:
             current_move = input()
-            move_status, msg = self.update_board(current_move)
+            move_status, msg = self.update_board(current_move, current_value)
             print(msg)
 
     def game_state(self):
@@ -99,16 +98,33 @@ class GameInterface:
         return self.check_if_any_player_wins(temp_list)
 
     def __str__(self):
-        msg = f"---------\n| {self.grid['1 1']} {self.grid['1 2']} {self.grid['1 3']} |\n" \
-              f"| {self.grid['2 1']} {self.grid['2 2']} {self.grid['2 3']} |\n" \
-              f"| {self.grid['3 1']} {self.grid['3 2']} {self.grid['3 3']} |\n" \
-              "---------"
+        msg =  f"---------\n| {self.grid['1 1']} {self.grid['1 2']} {self.grid['1 3']} |\n" \
+        f"| {self.grid['2 1']} {self.grid['2 2']} {self.grid['2 3']} |\n" \
+        f"| {self.grid['3 1']} {self.grid['3 2']} {self.grid['3 3']} |\n" \
+        "---------" # \
 
         return msg.replace("_", " ")
 
+class Game:
+    START_BOARD = ("_", "_", "_", "_", "_", "_", "_", "_", "_")
+
+    def __init__(self):
+        self.interface = GameInterface(*self.START_BOARD)
+
+    def play(self):
+        print(self.interface)
+        current_value = "X"
+        current_result = None
+        while current_result not in ("X wins", "O wins", "Draw"):
+            self.interface.make_move(input(), current_value)
+            current_result = self.interface.game_state()
+            if current_result == "Impossible":
+                break
+            current_value = "X" if current_value == "O" else "O"
+        print(current_result)
+
+
 
 if __name__ == '__main__':
-    user_input = input()
-    game = GameInterface(*user_input)
-    print(game)
-    game.make_move(input())
+    game = Game()
+    game.play()
